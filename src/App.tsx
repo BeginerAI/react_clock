@@ -18,6 +18,8 @@ export class App extends React.Component {
 
   timerId = 0;
 
+  timerName = 0;
+
   handelAddEvent = (event: Event) => {
     if (event) {
       this.setState({ hasClock: true });
@@ -43,7 +45,11 @@ export class App extends React.Component {
         }
       }, 1000);
 
-      this.timerId = window.setInterval(() => {
+      // setInterval(() => {
+      //   console.log(this.state.today.toUTCString().slice(-12, -4));
+      // }, 1000);
+
+      this.timerName = window.setInterval(() => {
         this.setState({ clockName: getRandomName() });
       }, 3300);
     }
@@ -61,28 +67,31 @@ export class App extends React.Component {
     if (prevState.hasClock !== this.state.hasClock) {
       if (!this.state.hasClock) {
         window.clearInterval(this.timerId);
+        window.clearInterval(this.timerName);
         console.log('Clock stopped');
       } else {
         this.timerId = window.setInterval(() => {
           this.setState({ today: new Date() });
         }, 1000);
 
-        this.timerId = window.setInterval(() => {
+        this.timerName = window.setInterval(() => {
           this.setState({ clockName: getRandomName() });
         }, 3300);
       }
     }
 
     if (prevState.clockName !== this.state.clockName) {
-      console.log(`${prevState.clockName}----${this.state.clockName}`);
+      console.warn(
+        `Renamed from ${prevState.clockName} to ${this.state.clockName}`,
+      );
     }
   }
 
   componentWillUnmount(): void {
-    console.log('un');
     window.clearInterval(this.timerId);
-    removeEventListener('click', this.handelAddEvent);
-    removeEventListener('contextmenu', this.handelRemoveEvent);
+    window.clearInterval(this.timerName);
+    document.removeEventListener('click', this.handelAddEvent);
+    document.removeEventListener('contextmenu', this.handelRemoveEvent);
   }
 
   render() {
